@@ -34,3 +34,12 @@ chatGPTを使用することで、文脈に沿った対話が可能となる。
 
 ## 使用技術
 ![スクリーンショット 2023-05-29 160422](https://github.com/RikuMaeda/LateBloomer/assets/115796549/ad8a4aed-e152-4aa0-98e9-17537a5ae691)
+
+上記が使用している技術である。LINEbotのコードはすべてPythonで記述している。今回においては私を含め多数がハッカソン初心者であり、使い慣れている言語が好ましいと考えたためである。
+### LINE Messaging API
+今回はLINEbotを作成したため、LINE Messaging APIを使用した。主にユーザとのやり取りをFlaskを用いて行っている。
+開発の際には公式ドキュメント
+
+https://developers.line.biz/ja/docs/messaging-api/
+
+を参考に作成した。
