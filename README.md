@@ -43,3 +43,6 @@ chatGPTを使用することで、文脈に沿った対話が可能となる。
 https://developers.line.biz/ja/docs/messaging-api/
 
 を参考に作成した。
+
+### OpenAI API
+今回はOpenAIのchatGPT（gpt-3.5-turbo）とwhisperを使用した。chatGPTは
