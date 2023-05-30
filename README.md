@@ -45,4 +45,6 @@ https://developers.line.biz/ja/docs/messaging-api/
 を参考に作成した。
 
 ### OpenAI API
-今回はOpenAIのchatGPT（gpt-3.5-turbo）とwhisperを使用した。chatGPTは
+今回はOpenAIのchatGPT（gpt-3.5-turbo）とwhisperを使用した。chatGPTはユーザとの対話に、WhisperはSpeech-to-Textに使用した。
+
+### ngrox
