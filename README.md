@@ -60,6 +60,7 @@ ngrokはLINEbotのデプロイのために使用した。ハッカソン当日�
 ## ハッカソンの結果
 ハッカソンの結果はありがたいことに優秀賞をいただいた。
 6月末のアドバンスのハッカソンにも出場する予定である。
+
 ![LateBloomer４](https://github.com/RikuMaeda/LateBloomer/assets/115796549/a05ae670-b556-4b81-a500-00a4137e84fb)
 
 ## 今後の展望
