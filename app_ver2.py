@@ -182,7 +182,6 @@ def interview_file_read():
         interview_log = f.read()
     return interview_log
 
-
 def text_to_speech(text_message, message_id):
     text = text_message.text
     tts = gTTS(text=text, lang='ja')  
