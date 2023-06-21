@@ -8,6 +8,8 @@ import urllib.request
 import json
 import base64
 from gtts import gTTS
+import requests
+import pyshorteners
 
 
 from linebot import (
@@ -112,9 +114,25 @@ def handle_message(event):
     text_to_speech(reply_message, message_id)
     interview_file_write("interviewer:"+response_text)
 
+    # アップロードする音声ファイルの情報
+    s3_file_path = f"line_response_audio/{message_id}.m4a"  # アップロードするファイルのパス
+    bucket_name = 'latebloomer'  # バケット名
+    object_name = f'{message_id}.m4a' 
+
+    # 音声ファイルをAmazon S3にアップロード
+    upload_to_s3(s3_file_path, bucket_name, object_name)
+    # HTTPSのリンクを取得
+    audio_url =  get_s3_https_link(bucket_name, object_name)
+    short_url = shorten_url(audio_url)
+
     # メッセージを返信する
     line_bot_api.reply_message(event.reply_token, reply_message)
+    send_voice_message(line_bot_api,message_id,short_url)
     os.remove(f"lineoudio/{message_id}.m4a")
+    os.remove(f"line_response_audio/{message_id}.m4a")
+
+    # S3内の該当データを削除
+    #delete_from_s3(bucket_name, object_name)
 
 def chatGPT_response(text):
 
@@ -185,8 +203,51 @@ def interview_file_read():
 def text_to_speech(text_message, message_id):
     text = text_message.text
     tts = gTTS(text=text, lang='ja')  
-    output_file = f"line_response_audio/{message_id}.mp3"
+    output_file = f"line_response_audio/{message_id}.m4a"
     tts.save(output_file)
+
+def upload_to_s3(file_path, bucket_name, object_name):
+    s3 = boto3.client('s3')
+    s3.upload_file(file_path, bucket_name, object_name)
+    print(f"File uploaded to Amazon S3: s3://{bucket_name}/{object_name}")
+
+def get_s3_https_link(bucket_name, object_name):
+    s3 = boto3.client('s3')
+    params = {'Bucket': bucket_name, 'Key': object_name}
+    url = s3.generate_presigned_url('get_object', Params=params, ExpiresIn=3600)
+    print(f"HTTPS Link: {url}")
+    return url
+
+def delete_from_s3(bucket_name, object_name):
+    s3 = boto3.client('s3')
+    s3.delete_object(Bucket=bucket_name, Key=object_name)
+    print(f"File deleted from Amazon S3: s3://{bucket_name}/{object_name}")
+
+#音声メッセージを送信する
+def send_voice_message(channel_access_token, user_id, audio_url):
+    url = 'https://api.line.me/v2/bot/message/push'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {channel_access_token}'
+    }
+    data = {
+        'to': user_id,
+        'messages': [
+            {
+                'type': 'audio',
+                'originalContentUrl': audio_url,
+                'duration': 60000
+            }
+        ]
+    }
+    response = requests.post(url, headers=headers, json=data)
+    print(response.json())
+
+def shorten_url(url):
+    s = pyshorteners.Shortener()
+    short_url = s.tinyurl.short(url)
+    print(short_url)
+    return short_url
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8000)   # ポート番号を8000に指定
